@@ -45,26 +45,27 @@ const ProductCard = ({
   features: string[]; 
   price: string;
 }) => (
-  <Card className="group overflow-hidden bg-white border-2 border-gray-100 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan hover:scale-[1.02]">
-    <div className="aspect-square overflow-hidden bg-gray-50">
+  <Card className="group overflow-hidden bg-white border-2 border-gray-100 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan hover:scale-[1.02] relative">
+    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/5 to-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div className="aspect-square overflow-hidden bg-gray-50 relative">
       <img 
         src={image} 
         alt={title}
         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
       />
     </div>
-    <div className="p-6 space-y-4">
-      <h3 className="text-2xl font-bold">{title}</h3>
+    <div className="p-6 space-y-4 relative z-10">
+      <h3 className="text-2xl font-bold group-hover:text-neon-purple transition-colors">{title}</h3>
       <ul className="space-y-2">
         {features.map((feature, idx) => (
           <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-            <Icon name="Check" size={16} className="text-neon-cyan mt-0.5 flex-shrink-0" />
+            <Icon name="Check" size={16} className="text-neon-cyan mt-0.5 flex-shrink-0 group-hover:scale-125 transition-transform" />
             <span>{feature}</span>
           </li>
         ))}
       </ul>
       <div className="pt-4 border-t border-gray-100">
-        <p className="text-3xl font-bold text-neon-purple">{price}</p>
+        <p className="text-3xl font-bold text-neon-purple neon-glow-purple">{price}</p>
         <p className="text-sm text-gray-500 mt-1">Подарочная упаковка в комплекте</p>
       </div>
       <Button 
@@ -79,9 +80,10 @@ const ProductCard = ({
 
 const GalleryImage = ({ src, index }: { src: string; index: number }) => (
   <div 
-    className="aspect-square overflow-hidden rounded-lg hover:scale-105 transition-transform duration-300 animate-fade-in"
+    className="aspect-square overflow-hidden rounded-lg hover:scale-105 transition-all duration-300 animate-fade-in group relative border-2 border-transparent hover:border-neon-cyan hover:neon-glow-cyan"
     style={{ animationDelay: `${index * 0.1}s` }}
   >
+    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/0 to-neon-cyan/0 group-hover:from-neon-purple/20 group-hover:to-neon-cyan/20 transition-all duration-300 z-10"></div>
     <img 
       src={src} 
       alt={`Работа ${index + 1}`}
@@ -152,52 +154,63 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img 
-            src="https://i.imgur.com/rQ4IeCx.jpeg" 
-            alt="Hero background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
+      <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-cyan rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-purple rounded-full blur-[120px] animate-pulse"></div>
         </div>
         
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 animate-fade-in-up">
-          <Badge className="bg-neon-cyan text-black text-sm px-4 py-2 neon-glow-cyan">
-            ILDAMN — Индивидуальные подарки
-          </Badge>
-          
-          <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-            Создаём персональные подарки,<br />
-            <span className="text-neon-cyan">которые запоминаются</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto">
-            Индивидуальные подарки ручной работы с вашим дизайном
-          </p>
-          
-          <div className="flex flex-col items-center gap-6 pt-8">
-            <CountdownTimer />
-            
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white hover:opacity-90 transition-opacity text-xl px-12 py-8 neon-glow-purple text-lg"
-              onClick={() => window.open('https://t.me/customLGHT', '_blank')}
-            >
-              Сделать индивидуальный заказ
-            </Button>
-            
-            <p className="text-white/70 text-sm">
-              Напиши нашему менеджеру — <span className="text-neon-cyan font-semibold">@customLGHT</span>
-            </p>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8 animate-fade-in-up text-left">
+              <Badge className="bg-neon-cyan text-black text-sm px-4 py-2 neon-glow-cyan inline-block">
+                ILDAMN — Индивидуальные подарки
+              </Badge>
+              
+              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+                Создаём персональные подарки,{' '}
+                <span className="text-neon-cyan neon-glow-cyan">которые запоминаются</span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-white/90">
+                Индивидуальные подарки ручной работы с вашим дизайном
+              </p>
+              
+              <div className="flex flex-col items-start gap-6 pt-4">
+                <CountdownTimer />
+                
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white hover:opacity-90 transition-opacity text-xl px-12 py-8 neon-glow-purple"
+                  onClick={() => window.open('https://t.me/customLGHT', '_blank')}
+                >
+                  Сделать индивидуальный заказ
+                </Button>
+                
+                <p className="text-white/70 text-sm">
+                  Напиши нашему менеджеру — <span className="text-neon-cyan font-semibold neon-glow-cyan">@customLGHT</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="relative animate-scale-in">
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-purple to-neon-cyan rounded-3xl blur-2xl opacity-50 neon-glow-cyan"></div>
+              <img 
+                src="https://i.imgur.com/rQ4IeCx.jpeg" 
+                alt="Hero product"
+                className="relative w-full h-auto rounded-3xl border-4 border-neon-cyan neon-glow-cyan shadow-2xl"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-4 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-72 h-72 bg-neon-purple rounded-full blur-[100px] opacity-20"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-neon-cyan rounded-full blur-[100px] opacity-20"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold">Каталог товаров</h2>
+            <h2 className="text-4xl md:text-5xl font-bold">Каталог <span className="text-neon-purple neon-glow-purple">товаров</span></h2>
             <p className="text-xl text-gray-600">Выбери свой идеальный подарок</p>
           </div>
           
@@ -215,15 +228,17 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-dark">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-4 bg-dark relative overflow-hidden">
+        <div className="absolute top-1/3 left-10 w-80 h-80 bg-neon-cyan rounded-full blur-[120px] opacity-30 animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-10 w-80 h-80 bg-neon-purple rounded-full blur-[120px] opacity-30 animate-pulse"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-white">
-            Почему выбирают <span className="text-neon-cyan">ILDAMN</span>
+            Почему выбирают <span className="text-neon-cyan neon-glow-cyan">ILDAMN</span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {advantages.map((adv, idx) => (
-              <Card key={idx} className="p-8 bg-gray-900 border-gray-800 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan text-center space-y-4">
+              <Card key={idx} className="p-8 bg-gray-900 border-2 border-gray-800 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan text-center space-y-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-neon-purple to-neon-cyan rounded-full flex items-center justify-center mx-auto neon-glow-cyan">
                   <Icon name={adv.icon as any} size={32} className="text-white" />
                 </div>
@@ -235,10 +250,12 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-4 bg-white relative overflow-hidden">
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-neon-purple rounded-full blur-[100px] opacity-15"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-neon-cyan rounded-full blur-[100px] opacity-15"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            Как сделать заказ
+            Как сделать <span className="text-neon-cyan neon-glow-cyan">заказ</span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -268,10 +285,12 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-4 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-neon-cyan rounded-full blur-[100px] opacity-10"></div>
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-neon-purple rounded-full blur-[100px] opacity-10"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold">Галерея наших работ</h2>
+            <h2 className="text-4xl md:text-5xl font-bold">Галерея <span className="text-neon-purple neon-glow-purple">наших работ</span></h2>
             <p className="text-xl text-gray-600">Более 20 000 проданных товаров</p>
           </div>
           
@@ -283,10 +302,11 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-dark">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
+      <section className="py-24 px-4 bg-dark relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-neon-purple to-neon-cyan rounded-full blur-[150px] opacity-20"></div>
+        <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Есть вопросы?
+            Есть <span className="text-neon-cyan neon-glow-cyan">вопросы?</span>
           </h2>
           <p className="text-xl text-gray-300">
             Нужна консультация или хотите обсудить индивидуальный заказ?
@@ -306,10 +326,12 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 px-4 bg-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-neon-cyan rounded-full blur-[120px] opacity-10"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-neon-purple rounded-full blur-[120px] opacity-10"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            Нам <span className="text-neon-purple">доверяют</span>
+            Нам <span className="text-neon-purple neon-glow-purple">доверяют</span>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -333,7 +355,7 @@ const Index = () => {
             <Button 
               variant="outline"
               size="lg"
-              className="border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-white transition-all text-lg px-8 py-6"
+              className="border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-white transition-all text-lg px-8 py-6 hover:neon-glow-cyan"
               onClick={() => window.open('https://www.wildberries.ru/brands/310698810-ildamn', '_blank')}
             >
               Мы на Wildberries / Ozon
@@ -342,8 +364,9 @@ const Index = () => {
         </div>
       </section>
 
-      <footer className="bg-dark py-12 px-4">
-        <div className="max-w-7xl mx-auto">
+      <footer className="bg-dark py-12 px-4 relative overflow-hidden">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-32 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-purple blur-[80px] opacity-30"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="space-y-4">
               <h3 className="text-3xl font-bold text-neon-cyan">ILDAMN</h3>
