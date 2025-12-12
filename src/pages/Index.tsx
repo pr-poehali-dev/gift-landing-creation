@@ -80,15 +80,15 @@ const ProductCard = ({
 
 const GalleryImage = ({ src, index }: { src: string; index: number }) => (
   <div 
-    className="aspect-square overflow-hidden rounded-lg hover:scale-105 transition-all duration-300 animate-fade-in group relative border-2 border-transparent hover:border-neon-cyan hover:neon-glow-cyan"
-    style={{ animationDelay: `${index * 0.1}s` }}
+    className="aspect-square overflow-hidden rounded-lg hover:scale-105 transition-all duration-300 group relative border-2 border-gray-200 hover:border-neon-cyan hover:neon-glow-cyan bg-gray-100"
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/0 to-neon-cyan/0 group-hover:from-neon-purple/20 group-hover:to-neon-cyan/20 transition-all duration-300 z-10"></div>
     <img 
       src={src} 
       alt={`Работа ${index + 1}`}
       className="w-full h-full object-cover"
+      loading="lazy"
     />
+    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/0 to-neon-cyan/0 group-hover:from-neon-purple/20 group-hover:to-neon-cyan/20 transition-all duration-300"></div>
   </div>
 );
 
