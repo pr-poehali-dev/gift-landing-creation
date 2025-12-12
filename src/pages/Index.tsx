@@ -1,315 +1,408 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import CountdownTimer from '@/components/CountdownTimer';
 
-const CountdownTimer = () => {
-  const [timeLeft, setTimeLeft] = useState(180);
+export default function Index() {
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
-    
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) return 180;
-        return prev - 1;
-      });
-    }, 1000);
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in-up');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-    return () => clearInterval(timer);
-  }, [timeLeft]);
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+      observerRef.current?.observe(el);
+    });
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+    return () => observerRef.current?.disconnect();
+  }, []);
 
-  return (
-    <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-full neon-glow-cyan">
-      <Icon name="Clock" size={20} className="text-white" />
-      <span className="text-white font-bold text-lg">
-        {minutes}:{seconds.toString().padStart(2, '0')}
-      </span>
-      <span className="text-white/90 text-sm">— Скидка 20% на первый заказ!</span>
-    </div>
-  );
-};
-
-const ProductCard = ({ 
-  image, 
-  title, 
-  features, 
-  price 
-}: { 
-  image: string; 
-  title: string; 
-  features: string[]; 
-  price: string;
-}) => (
-  <Card className="group overflow-hidden bg-white border-2 border-gray-100 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan hover:scale-[1.02] relative">
-    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/5 to-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-    <div className="aspect-square overflow-hidden bg-gray-50 relative">
-      <img 
-        src={image} 
-        alt={title}
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-      />
-    </div>
-    <div className="p-6 space-y-4 relative z-10">
-      <h3 className="text-2xl font-bold group-hover:text-neon-purple transition-colors">{title}</h3>
-      <ul className="space-y-2">
-        {features.map((feature, idx) => (
-          <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
-            <Icon name="Check" size={16} className="text-neon-cyan mt-0.5 flex-shrink-0 group-hover:scale-125 transition-transform" />
-            <span>{feature}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="pt-4 border-t border-gray-100">
-        <p className="text-3xl font-bold text-neon-purple neon-glow-purple">{price}</p>
-        <p className="text-sm text-gray-500 mt-1">Подарочная упаковка в комплекте</p>
-      </div>
-      <Button 
-        className="w-full bg-gradient-to-r from-neon-purple to-neon-cyan text-white hover:opacity-90 transition-opacity text-lg py-6 neon-glow-purple"
-        onClick={() => window.open('https://t.me/customLGHT', '_blank')}
-      >
-        Заказать
-      </Button>
-    </div>
-  </Card>
-);
-
-const GalleryImage = ({ src, index }: { src: string; index: number }) => (
-  <div 
-    className="aspect-square overflow-hidden rounded-lg hover:scale-105 transition-all duration-300 group relative border-2 border-gray-200 hover:border-neon-cyan hover:neon-glow-cyan bg-gray-100"
-  >
-    <img 
-      src={src} 
-      alt={`Работа ${index + 1}`}
-      className="w-full h-full object-cover"
-      loading="lazy"
-    />
-    <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/0 to-neon-cyan/0 group-hover:from-neon-purple/20 group-hover:to-neon-cyan/20 transition-all duration-300"></div>
-  </div>
-);
-
-const Index = () => {
   const products = [
     {
-      image: 'https://i.imgur.com/5Gnxgll.jpeg',
       title: 'Акриловые 3D ночники',
-      features: ['16 цветов свечения', 'Пульт в комплекте', 'Размер 15×20 см'],
-      price: 'до 1990 ₽'
+      image: 'https://i.imgur.com/6QAYZVq.png',
+      price: 'от 1590 ₽',
+      features: ['16 цветов свечения', 'Пульт в комплекте', 'Размер 15×20 см', 'Упаковка: крафтовая коробка — 0 ₽']
     },
     {
-      image: 'https://i.imgur.com/RanEL4d.jpeg',
       title: 'Акриловые фигурки с УФ-печатью',
-      features: ['Размер 15×20 см', 'УФ-печать высокого качества', 'Любой дизайн'],
-      price: 'до 299 ₽'
+      image: 'https://i.imgur.com/SqYdnOc.jpeg',
+      price: 'до 299 ₽',
+      features: ['Размер 15×20 см', 'УФ-печать высокого качества']
     },
     {
-      image: 'https://i.imgur.com/85SSWMM.png',
-      title: 'Тафтинг-ковры',
-      features: ['Ручная работа', 'Размер 80×80 см', 'Индивидуальный дизайн'],
-      price: 'от 2190 ₽'
+      title: 'Тафтинг-ковры ручного изготовления',
+      image: 'https://i.imgur.com/bOzrpkx.jpeg',
+      price: 'от 2190 ₽',
+      features: ['Ручная работа', 'Размер 80×80 см']
     },
     {
-      image: 'https://i.imgur.com/4ZF6i5h.png',
       title: 'Кулоны с гравировкой',
-      features: ['Любая надпись', 'Цепочка в комплекте', 'Премиум качество'],
-      price: '490 ₽'
+      image: 'https://i.imgur.com/UnX017M.jpeg',
+      price: '490 ₽',
+      features: ['Любая надпись', 'Цепочка в комплекте']
     },
     {
-      image: 'https://i.imgur.com/sZzfEOU.jpeg',
       title: 'Акриловые топперы',
-      features: ['Любой дизайн', 'Для торта или декора', 'Быстрое изготовление'],
-      price: '299 ₽'
+      image: 'https://i.imgur.com/sZzfEOU.jpeg',
+      price: '299 ₽',
+      features: ['Идеально для тортов', 'Любой дизайн']
     }
   ];
 
-  const galleryImages = [
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/57ad1084-76be-4af1-b888-36f1df9f4370.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/d7f8d55a-84e4-4b3e-9adf-a88fc69a1294.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/8f1e8bae-1466-40af-96b3-d23ab4af2b6a.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/2114581e-e347-493d-92c4-7067eb183592.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/57ad1084-76be-4af1-b888-36f1df9f4370.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/d7f8d55a-84e4-4b3e-9adf-a88fc69a1294.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/8f1e8bae-1466-40af-96b3-d23ab4af2b6a.jpg',
-    'https://cdn.poehali.dev/projects/ec9f06a2-0a9c-4f69-a814-7d49a8fefc66/files/2114581e-e347-493d-92c4-7067eb183592.jpg'
+  const advantages = [
+    { icon: 'Sparkles', title: 'Индивидуальный дизайн', desc: 'Создаём по вашим пожеланиям' },
+    { icon: 'Zap', title: 'Быстрое производство', desc: '1–3 дня' },
+    { icon: 'Gift', title: 'Подарочная упаковка', desc: 'Бесплатно в комплекте' },
+    { icon: 'Truck', title: 'Доставка по РФ', desc: 'От 200 ₽ (Яндекс.Доставка)' }
   ];
 
-  const advantages = [
-    { icon: 'Sparkles', title: 'Индивидуальный дизайн', desc: 'Создаём по вашим эскизам' },
-    { icon: 'Zap', title: 'Быстрое производство', desc: 'Готово за 1–3 дня' },
-    { icon: 'Gift', title: 'Премиум упаковка', desc: 'Крафтовая коробка в подарок' },
-    { icon: 'Truck', title: 'Доставка по РФ', desc: 'От 200 ₽ через Яндекс' }
+  const steps = [
+    { num: '01', title: 'Оставьте заявку', desc: 'Напишите @customLGHT или заполните форму' },
+    { num: '02', title: 'Создадим дизайн', desc: 'Разработаем индивидуальный макет' },
+    { num: '03', title: 'Доставим подарок', desc: 'В красивой подарочной упаковке' }
+  ];
+
+  const reviews = [
+    'https://i.imgur.com/A6TNgZj.jpeg',
+    'https://i.imgur.com/qrCAlu0.jpeg',
+    'https://i.imgur.com/bLjnzEC.jpeg',
+    'https://i.imgur.com/6kPpVXz.jpeg',
+    'https://i.imgur.com/DOlADdG.jpeg',
+    'https://i.imgur.com/iQjn6RN.jpeg',
+    'https://i.imgur.com/keEl2DP.jpeg',
+    'https://i.imgur.com/ZEm2fJA.jpeg',
+    'https://i.imgur.com/fCa8AW0.jpeg',
+    'https://i.imgur.com/A1PSw6N.jpeg',
+    'https://i.imgur.com/ooJGMNB.jpeg',
+    'https://i.imgur.com/HF5rLp4.jpeg'
+  ];
+
+  const galleryItems = [
+    { type: 'image', src: 'https://i.imgur.com/Vsgj6Le.png' },
+    { type: 'image', src: 'https://i.imgur.com/qtQfzKm.png' },
+    { type: 'image', src: 'https://i.imgur.com/BsYvZbj.png' },
+    { type: 'image', src: 'https://i.imgur.com/6QAYZVq.png' },
+    { type: 'image', src: 'https://i.imgur.com/mOWPtNK.png' },
+    { type: 'image', src: 'https://i.imgur.com/klvqKn1.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/UnX017M.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/SqYdnOc.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/bOzrpkx.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/qHC5pAX.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/c8xdpqI.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/RtBfhlS.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/veCinrr.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/rQ4IeCx.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/G28J96C.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/U7QsPbh.jpeg' },
+    { type: 'video', src: 'https://i.imgur.com/hjbUgZK.mp4' },
+    { type: 'video', src: 'https://i.imgur.com/zAfY0WA.mp4' },
+    { type: 'video', src: 'https://i.imgur.com/6MFBLAu.mp4' },
+    { type: 'video', src: 'https://i.imgur.com/AqOg8vi.mp4' },
+    { type: 'video', src: 'https://i.imgur.com/lLCxq2f.mp4' },
+    { type: 'image', src: 'https://i.imgur.com/JDBdgGO.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/8oCWxp9.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/4tXlu56.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/CPK0ga8.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/Pta2qBS.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/i7wH2q6.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/audfBrS.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/r6XUDUX.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/XiqmHzZ.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/kVcnpWS.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/QkNfJRB.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/6nWatH9.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/0jkLmeZ.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/238sbdA.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/hGYLEvK.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/2NeD79V.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/eeT4YBc.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/6L5T1ia.jpeg' },
+    { type: 'image', src: 'https://i.imgur.com/zjhBoE7.jpeg' }
+  ];
+
+  const trustImages = [
+    'https://i.imgur.com/svj0U9j.jpeg',
+    'https://i.imgur.com/IuW6X16.jpeg'
   ];
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-black">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-cyan rounded-full blur-[120px] animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-purple rounded-full blur-[120px] animate-pulse"></div>
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-black">
+          <img 
+            src="https://i.imgur.com/rQ4IeCx.jpeg"
+            alt="Hero"
+            className="w-full h-full object-cover opacity-60"
+          />
         </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 animate-fade-in-up text-left">
-              <Badge className="bg-neon-cyan text-black text-sm px-4 py-2 neon-glow-cyan inline-block">
-                ILDAMN — Индивидуальные подарки
-              </Badge>
-              
-              <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-                Создаём персональные подарки,{' '}
-                <span className="text-neon-cyan neon-glow-cyan">которые запоминаются</span>
-              </h1>
-              
-              <p className="text-xl md:text-2xl text-white/90">
-                Индивидуальные подарки ручной работы с вашим дизайном
-              </p>
-              
-              <div className="flex flex-col items-start gap-6 pt-4">
-                <CountdownTimer />
-                
-                <Button 
-                  size="lg"
-                  className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white hover:opacity-90 transition-opacity text-xl px-12 py-8 neon-glow-purple"
-                  onClick={() => window.open('https://t.me/customLGHT', '_blank')}
-                >
-                  Сделать индивидуальный заказ
-                </Button>
-                
-                <p className="text-white/70 text-sm">
-                  Напиши нашему менеджеру — <span className="text-neon-cyan font-semibold neon-glow-cyan">@customLGHT</span>
-                </p>
-              </div>
-            </div>
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            Создаём персональные подарки,<br />которые <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">запоминаются</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-300 mb-8">
+            Индивидуальные подарки ручной работы с вашим дизайном
+          </p>
+          
+          <div className="flex flex-col items-center gap-6 mb-8">
+            <CountdownTimer />
+            <p className="text-yellow-400 font-semibold text-lg">
+              Скидка 20% на первый заказ до конца таймера!
+            </p>
+          </div>
 
-            <div className="relative animate-scale-in">
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-purple to-neon-cyan rounded-3xl blur-2xl opacity-50 neon-glow-cyan"></div>
-              <img 
-                src="https://i.imgur.com/rQ4IeCx.jpeg" 
-                alt="Hero product"
-                className="relative w-full h-auto rounded-3xl border-4 border-neon-cyan neon-glow-cyan shadow-2xl"
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white text-xl px-12 py-6 h-auto neon-glow-purple"
+            onClick={() => window.open('https://t.me/customLGHT', '_blank')}
+          >
+            Сделать индивидуальный заказ
+          </Button>
+          <p className="text-gray-400 mt-4">
+            Напиши нашему менеджеру — <span className="text-cyan-400">@customLGHT</span>
+          </p>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-black">
+            Каталог товаров
+          </h2>
+          <p className="text-center text-gray-600 mb-16 text-lg">
+            Индивидуальные подарки на любой вкус
+          </p>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((product, idx) => (
+              <div 
+                key={idx}
+                className="animate-on-scroll bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 hover:border-purple-500 group"
+              >
+                <div className="relative overflow-hidden h-80">
+                  <img 
+                    src={product.image}
+                    alt={product.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-2xl font-bold mb-3 text-black">{product.title}</h3>
+                  <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500 mb-4">
+                    {product.price}
+                  </p>
+                  <ul className="space-y-2 mb-6">
+                    {product.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-2 text-gray-700">
+                        <Icon name="Check" size={20} className="text-cyan-500 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <div className="flex flex-col gap-4">
+                    <CountdownTimer />
+                    <p className="text-yellow-600 font-semibold text-sm">
+                      -20% до конца таймера!
+                    </p>
+                    <Button 
+                      className="w-full bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600"
+                      onClick={() => window.open('https://t.me/customLGHT', '_blank')}
+                    >
+                      Заказать
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-black">
+            Наши преимущества
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {advantages.map((item, idx) => (
+              <div 
+                key={idx}
+                className="animate-on-scroll text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all"
+              >
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center">
+                  <Icon name={item.icon as any} size={32} className="text-white" />
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-black">{item.title}</h3>
+                <p className="text-gray-600">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 bg-black text-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">
+            Процесс заказа
+          </h2>
+          <p className="text-center text-gray-400 mb-16 text-lg">
+            Всего 3 простых шага до вашего уникального подарка
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {steps.map((step, idx) => (
+              <div 
+                key={idx}
+                className="animate-on-scroll text-center p-8 bg-gradient-to-br from-purple-900/30 to-cyan-900/30 rounded-2xl border border-purple-500/30"
+              >
+                <div className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600 mb-4">
+                  {step.num}
+                </div>
+                <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
+                <p className="text-gray-400">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mb-12">
+            <h3 className="text-3xl font-bold text-center mb-8">Процесс изготовления</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <video 
+                src="https://i.imgur.com/hWDvX6b.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full rounded-xl"
+              />
+              <video 
+                src="https://i.imgur.com/SDiRkf8.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full rounded-xl"
               />
             </div>
           </div>
+
+          <div className="text-center">
+            <CountdownTimer />
+            <p className="text-yellow-400 font-semibold text-lg mt-4 mb-6">
+              Скидка 20% до конца таймера!
+            </p>
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-xl px-12 py-6 h-auto"
+              onClick={() => window.open('https://t.me/customLGHT', '_blank')}
+            >
+              Начать работу
+            </Button>
+          </div>
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-72 h-72 bg-neon-purple rounded-full blur-[100px] opacity-20"></div>
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-neon-cyan rounded-full blur-[100px] opacity-20"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold">Каталог <span className="text-neon-purple neon-glow-purple">товаров</span></h2>
-            <p className="text-xl text-gray-600">Выбери свой идеальный подарок</p>
+      <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+              Отзывы клиентов
+            </h2>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="flex">
+                {[1,2,3,4,5].map((star) => (
+                  <Icon key={star} name="Star" size={24} className="text-yellow-500 fill-yellow-500" />
+                ))}
+              </div>
+              <span className="text-2xl font-bold text-black">4.6/5</span>
+            </div>
+            <p className="text-xl text-purple-600 font-semibold">
+              Более 280 000 проданных товаров
+            </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {products.map((product, idx) => (
-              <div key={idx} className="animate-scale-in" style={{ animationDelay: `${idx * 0.1}s` }}>
-                <ProductCard {...product} />
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-12">
+            {reviews.map((img, idx) => (
+              <div 
+                key={idx}
+                className="animate-on-scroll rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:scale-105"
+                style={{ animationDelay: `${idx * 0.1}s` }}
+              >
+                <img 
+                  src={img}
+                  alt={`Отзыв ${idx + 1}`}
+                  className="w-full h-64 object-cover"
+                />
               </div>
             ))}
           </div>
-
-          <div className="flex justify-center">
-            <CountdownTimer />
-          </div>
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-dark relative overflow-hidden">
-        <div className="absolute top-1/3 left-10 w-80 h-80 bg-neon-cyan rounded-full blur-[120px] opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-1/3 right-10 w-80 h-80 bg-neon-purple rounded-full blur-[120px] opacity-30 animate-pulse"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-white">
-            Почему выбирают <span className="text-neon-cyan neon-glow-cyan">ILDAMN</span>
+      <section className="py-20 px-4 bg-black">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-white">
+            Галерея работ
           </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {advantages.map((adv, idx) => (
-              <Card key={idx} className="p-8 bg-gray-900 border-2 border-gray-800 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan text-center space-y-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-neon-purple to-neon-cyan rounded-full flex items-center justify-center mx-auto neon-glow-cyan">
-                  <Icon name={adv.icon as any} size={32} className="text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white">{adv.title}</h3>
-                <p className="text-gray-400">{adv.desc}</p>
-              </Card>
+          <p className="text-center text-gray-400 mb-16 text-lg">
+            Посмотрите, что мы создали для наших клиентов
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {galleryItems.map((item, idx) => (
+              <div 
+                key={idx}
+                className="animate-on-scroll rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300"
+                style={{ animationDelay: `${idx * 0.05}s` }}
+              >
+                {item.type === 'video' ? (
+                  <video 
+                    src={item.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-64 object-cover"
+                  />
+                ) : (
+                  <img 
+                    src={item.src}
+                    alt={`Работа ${idx + 1}`}
+                    className="w-full h-64 object-cover"
+                  />
+                )}
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-white relative overflow-hidden">
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-neon-purple rounded-full blur-[100px] opacity-15"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-neon-cyan rounded-full blur-[100px] opacity-15"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            Как сделать <span className="text-neon-cyan neon-glow-cyan">заказ</span>
+      <section className="py-20 px-4 bg-gradient-to-r from-purple-900 to-cyan-900 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Есть вопросы?
           </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              { num: '01', title: 'Оставьте заявку', desc: 'Напишите @customLGHT или оставьте заявку на сайте', icon: 'MessageCircle' },
-              { num: '02', title: 'Создаём дизайн', desc: 'Разрабатываем ваш индивидуальный дизайн', icon: 'Palette' },
-              { num: '03', title: 'Производство и доставка', desc: 'Производим и доставляем в подарочной коробке', icon: 'Package' }
-            ].map((step, idx) => (
-              <Card key={idx} className="p-8 border-2 border-gray-100 hover:border-neon-purple transition-all duration-300 hover:neon-glow-purple relative overflow-hidden group">
-                <div className="absolute top-0 right-0 text-[120px] font-bold text-gray-50 group-hover:text-neon-cyan/10 transition-colors">
-                  {step.num}
-                </div>
-                <div className="relative space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-neon-purple to-neon-cyan rounded-full flex items-center justify-center neon-glow-cyan">
-                    <Icon name={step.icon as any} size={32} className="text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold">{step.title}</h3>
-                  <p className="text-gray-600">{step.desc}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
-
-          <div className="flex justify-center">
-            <CountdownTimer />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 px-4 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-neon-cyan rounded-full blur-[100px] opacity-10"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-neon-purple rounded-full blur-[100px] opacity-10"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-4xl md:text-5xl font-bold">Галерея <span className="text-neon-purple neon-glow-purple">наших работ</span></h2>
-            <p className="text-xl text-gray-600">Более 20 000 проданных товаров</p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {galleryImages.map((img, idx) => (
-              <GalleryImage key={idx} src={img} index={idx} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 px-4 bg-dark relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-neon-purple to-neon-cyan rounded-full blur-[150px] opacity-20"></div>
-        <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-white">
-            Есть <span className="text-neon-cyan neon-glow-cyan">вопросы?</span>
-          </h2>
-          <p className="text-xl text-gray-300">
+          <p className="text-xl text-gray-200 mb-8">
             Нужна консультация или хотите обсудить индивидуальный заказ?
           </p>
           
-          <div className="flex flex-col items-center gap-6 pt-8">
+          <div className="flex flex-col items-center gap-6">
             <CountdownTimer />
-            
+            <p className="text-yellow-300 font-semibold text-lg">
+              Скидка 20% до конца таймера!
+            </p>
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-neon-purple to-neon-cyan text-white hover:opacity-90 transition-opacity text-xl px-12 py-8 neon-glow-purple"
+              className="bg-white text-purple-900 hover:bg-gray-100 text-xl px-12 py-6 h-auto font-bold"
               onClick={() => window.open('https://t.me/customLGHT', '_blank')}
             >
               Написать менеджеру @customLGHT
@@ -318,95 +411,122 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 px-4 bg-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-neon-cyan rounded-full blur-[120px] opacity-10"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-neon-purple rounded-full blur-[120px] opacity-10"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">
-            Нам <span className="text-neon-purple neon-glow-purple">доверяют</span>
+      <section className="py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-black">
+            Нам доверяют
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              { icon: 'Award', value: '3+ года', label: 'На рынке' },
-              { icon: 'ShoppingBag', value: '20 000+', label: 'Проданных товаров' },
-              { icon: 'Star', value: '4.7/5', label: 'Средняя оценка' },
-              { icon: 'Users', value: '15 000+', label: 'Довольных клиентов' }
-            ].map((stat, idx) => (
-              <Card key={idx} className="p-8 text-center border-2 border-gray-100 hover:border-neon-cyan transition-all duration-300 hover:neon-glow-cyan space-y-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-neon-purple to-neon-cyan rounded-full flex items-center justify-center mx-auto neon-glow-cyan">
-                  <Icon name={stat.icon as any} size={32} className="text-white" />
-                </div>
-                <p className="text-4xl font-bold text-neon-purple">{stat.value}</p>
-                <p className="text-gray-600">{stat.label}</p>
-              </Card>
-            ))}
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="text-center p-8 bg-gradient-to-br from-purple-50 to-cyan-50 rounded-2xl">
+              <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500 mb-2">
+                3+
+              </p>
+              <p className="text-xl text-gray-700">Лет на рынке</p>
+            </div>
+            <div className="text-center p-8 bg-gradient-to-br from-purple-50 to-cyan-50 rounded-2xl">
+              <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500 mb-2">
+                280K+
+              </p>
+              <p className="text-xl text-gray-700">Проданных товаров</p>
+            </div>
+            <div className="text-center p-8 bg-gradient-to-br from-purple-50 to-cyan-50 rounded-2xl">
+              <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500 mb-2">
+                4.6/5
+              </p>
+              <p className="text-xl text-gray-700">Средняя оценка</p>
+            </div>
           </div>
 
-          <div className="mt-16 text-center">
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-2 border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-white transition-all text-lg px-8 py-6 hover:neon-glow-cyan"
-              onClick={() => window.open('https://www.wildberries.ru/brands/310698810-ildamn', '_blank')}
-            >
-              Мы на Wildberries / Ozon
-            </Button>
+          <div className="mb-12">
+            <h3 className="text-3xl font-bold text-center mb-8 text-black">
+              Продажи на маркетплейсах
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {trustImages.map((img, idx) => (
+                <img 
+                  key={idx}
+                  src={img}
+                  alt={`Статистика ${idx + 1}`}
+                  className="w-full rounded-xl shadow-lg"
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-xl text-gray-700 mb-6">Мы продаём на:</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button 
+                variant="outline"
+                size="lg"
+                className="text-lg"
+                onClick={() => window.open('https://www.wildberries.ru/brands/310698810-ildamn', '_blank')}
+              >
+                <Icon name="Store" className="mr-2" />
+                Wildberries (ildamn)
+              </Button>
+              <Button 
+                variant="outline"
+                size="lg"
+                className="text-lg"
+                onClick={() => window.open('https://www.wildberries.ru/seller/1204459', '_blank')}
+              >
+                <Icon name="Store" className="mr-2" />
+                Wildberries (Продавец)
+              </Button>
+              <Button 
+                variant="outline"
+                size="lg"
+                className="text-lg"
+                onClick={() => window.open('https://www.ozon.ru/seller/infane-1627082/', '_blank')}
+              >
+                <Icon name="ShoppingBag" className="mr-2" />
+                Ozon
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="bg-dark py-12 px-4 relative overflow-hidden">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-32 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-purple blur-[80px] opacity-30"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div className="space-y-4">
-              <h3 className="text-3xl font-bold text-neon-cyan">ILDAMN</h3>
-              <p className="text-gray-400">Индивидуальные подарки ручной работы</p>
+      <footer className="bg-black text-white py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600 mb-4">
+                infane
+              </h3>
+              <p className="text-gray-400">
+                Создаём персональные подарки, которые запоминаются
+              </p>
             </div>
-            
-            <div className="space-y-4">
-              <h4 className="text-white font-semibold">Контакты</h4>
-              <div className="space-y-2">
-                <a 
-                  href="https://t.me/customLGHT" 
-                  target="_blank"
-                  className="flex items-center gap-2 text-gray-400 hover:text-neon-cyan transition-colors"
-                >
-                  <Icon name="Send" size={16} />
-                  <span>Telegram: @customLGHT</span>
-                </a>
-                <a 
-                  href="https://www.wildberries.ru/brands/310698810-ildamn" 
-                  target="_blank"
-                  className="flex items-center gap-2 text-gray-400 hover:text-neon-cyan transition-colors"
-                >
-                  <Icon name="ShoppingCart" size={16} />
-                  <span>Wildberries / Ozon</span>
-                </a>
+            <div>
+              <h4 className="text-xl font-bold mb-4">Контакты</h4>
+              <div className="space-y-2 text-gray-400">
+                <p className="flex items-center gap-2">
+                  <Icon name="Send" size={18} />
+                  Telegram: <a href="https://t.me/customLGHT" className="text-cyan-400 hover:underline">@customLGHT</a>
+                </p>
               </div>
             </div>
-            
-            <div className="space-y-4">
-              <h4 className="text-white font-semibold">Информация</h4>
-              <div className="space-y-2">
-                <a href="#" className="block text-gray-400 hover:text-neon-cyan transition-colors">
-                  Политика конфиденциальности
+            <div>
+              <h4 className="text-xl font-bold mb-4">Маркетплейсы</h4>
+              <div className="space-y-2 text-gray-400">
+                <a href="https://www.wildberries.ru/brands/310698810-ildamn" target="_blank" rel="noopener noreferrer" className="block hover:text-cyan-400">
+                  Wildberries
                 </a>
-                <p className="text-gray-500 text-sm">© 2025 ILDAMN. Все права защищены</p>
+                <a href="https://www.ozon.ru/seller/infane-1627082/" target="_blank" rel="noopener noreferrer" className="block hover:text-cyan-400">
+                  Ozon
+                </a>
               </div>
             </div>
           </div>
-          
-          <div className="border-t border-gray-800 pt-8 text-center">
-            <p className="text-gray-500 text-sm">
-              Сделано с ❤️ для тех, кто ценит индивидуальность
-            </p>
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-500">
+            <p>© 2024 infane. Все права защищены.</p>
+            <p className="mt-2">Политика конфиденциальности</p>
           </div>
         </div>
       </footer>
     </div>
   );
-};
-
-export default Index;
+}
